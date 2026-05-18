@@ -206,7 +206,7 @@ export function GoalsPage() {
                       <span className="px-2 py-1 bg-[#F3F4F6] rounded">UoM: {s.uom}</span>
                       <span className="px-2 py-1 bg-[#F3F4F6] rounded">Target: {s.target}</span>
                     </div>
-                    <Button onClick={() => useAISuggestion(s)} className="bg-[#7C3AED] hover:bg-[#6D28D9] text-white h-9 px-4 text-sm">
+                    <Button onClick={() => handleAISuggestion(s)} className="bg-[#7C3AED] hover:bg-[#6D28D9] text-white h-9 px-4 text-sm">
                       Use This Goal
                     </Button>
                   </div>
