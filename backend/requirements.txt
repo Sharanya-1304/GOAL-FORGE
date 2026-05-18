@@ -33,14 +33,9 @@ aiohttp==3.13.5
 python-dotenv==1.2.2
 PyYAML==6.0.3
 typing_extensions==4.15.0
+gunicorn==23.0.0
 
 # Optional: AI/ML (comment out if not needed)
 # openai==1.99.9
 # google-generativeai==0.8.6
 # litellm==1.80.0
-uvicorn==0.25.0
-gunicorn==23.0.0
-watchfiles==1.1.1
-websockets==16.0
-yarl==1.23.0
-zipp==3.23.1
