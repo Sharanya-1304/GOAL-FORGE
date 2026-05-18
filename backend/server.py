@@ -1356,36 +1356,48 @@ async def startup_event():
     
     existing_admin = await db.users.find_one({"email": admin_email})
     if not existing_admin:
-        await db.users.insert_one({
-            "email": admin_email,
-            "password_hash": hash_password(admin_password),
-            "name": "Admin User",
-            "role": "admin",
-            "department": "Management",
-            "manager_id": None,
-            "avatar_url": None,
-            "points": 0,
-            "badges": ["founder"],
-            "created_at": datetime.now(timezone.utc)
-        })
-        logger.info(f"Admin user created: {admin_email}")
+        try:
+            await db.users.insert_one({
+                "email": admin_email,
+                "password_hash": hash_password(admin_password),
+                "name": "Admin User",
+                "role": "admin",
+                "department": "Management",
+                "manager_id": None,
+                "avatar_url": None,
+                "points": 0,
+                "badges": ["founder"],
+                "created_at": datetime.now(timezone.utc)
+            })
+            logger.info(f"Admin user created: {admin_email}")
+        except Exception as e:
+            if "duplicate" in str(e).lower():
+                logger.info(f"Admin user already exists: {admin_email}")
+            else:
+                raise
     
     manager_email = "manager@goalforge.com"
     existing_manager = await db.users.find_one({"email": manager_email})
     if not existing_manager:
-        await db.users.insert_one({
-            "email": manager_email,
-            "password_hash": hash_password("Manager@123"),
-            "name": "Sarah Johnson",
-            "role": "manager",
-            "department": "Engineering",
-            "manager_id": None,
-            "avatar_url": None,
-            "points": 0,
-            "badges": [],
-            "created_at": datetime.now(timezone.utc)
-        })
-        logger.info("Manager user created")
+        try:
+            await db.users.insert_one({
+                "email": manager_email,
+                "password_hash": hash_password("Manager@123"),
+                "name": "Sarah Johnson",
+                "role": "manager",
+                "department": "Engineering",
+                "manager_id": None,
+                "avatar_url": None,
+                "points": 0,
+                "badges": [],
+                "created_at": datetime.now(timezone.utc)
+            })
+            logger.info("Manager user created")
+        except Exception as e:
+            if "duplicate" in str(e).lower():
+                logger.info("Manager user already exists")
+            else:
+                raise
     
     manager = await db.users.find_one({"email": manager_email})
     manager_id = str(manager["_id"]) if manager else None
@@ -1399,19 +1411,25 @@ async def startup_event():
     for emp in employees:
         existing = await db.users.find_one({"email": emp["email"]})
         if not existing:
-            await db.users.insert_one({
-                "email": emp["email"],
-                "password_hash": hash_password("Employee@123"),
-                "name": emp["name"],
-                "role": "employee",
-                "department": emp["department"],
-                "manager_id": manager_id,
-                "avatar_url": None,
-                "points": 0,
-                "badges": [],
-                "created_at": datetime.now(timezone.utc)
-            })
-            logger.info(f"Employee created: {emp['email']}")
+            try:
+                await db.users.insert_one({
+                    "email": emp["email"],
+                    "password_hash": hash_password("Employee@123"),
+                    "name": emp["name"],
+                    "role": "employee",
+                    "department": emp["department"],
+                    "manager_id": manager_id,
+                    "avatar_url": None,
+                    "points": 0,
+                    "badges": [],
+                    "created_at": datetime.now(timezone.utc)
+                })
+                logger.info(f"Employee created: {emp['email']}")
+            except Exception as e:
+                if "duplicate" in str(e).lower():
+                    logger.info(f"Employee already exists: {emp['email']}")
+                else:
+                    raise
     
     creds_content = f"""# Test Credentials for GoalForge Portal
 
