@@ -630,6 +630,8 @@ async def get_analytics_dashboard(user: dict = Depends(get_current_user)):
         pending_goals = await db.goals.count_documents({"status": "pending", "deleted": {"$ne": True}})
         total_checkins = await db.checkins.count_documents({})
         
+        logger.info(f"Admin dashboard: users={total_users}, goals={total_goals}, approved={approved_goals}, pending={pending_goals}")
+        
         return {
             "total_users": total_users,
             "total_goals": total_goals,
@@ -644,6 +646,9 @@ async def get_analytics_dashboard(user: dict = Depends(get_current_user)):
         team_goals = await db.goals.count_documents({"user_id": {"$in": team_ids}, "deleted": {"$ne": True}})
         pending = await db.goals.count_documents({"user_id": {"$in": team_ids}, "status": "pending", "deleted": {"$ne": True}})
         approved = await db.goals.count_documents({"user_id": {"$in": team_ids}, "status": "approved", "deleted": {"$ne": True}})
+        
+        logger.info(f"Manager dashboard: manager_id={user['id']}, team_size={len(team_ids)}, team_goals={team_goals}")
+        
         return {"my_goals": my_goals, "team_goals": team_goals, "pending_approvals": pending, "approved_goals": approved, "team_size": len(team_ids)}
     
     my_goals = await db.goals.count_documents({"user_id": user["id"], "deleted": {"$ne": True}})
@@ -1380,7 +1385,7 @@ async def startup_event():
     existing_manager = await db.users.find_one({"email": manager_email})
     if not existing_manager:
         try:
-            await db.users.insert_one({
+            result = await db.users.insert_one({
                 "email": manager_email,
                 "password_hash": hash_password("Manager@123"),
                 "name": "Sarah Johnson",
@@ -1392,15 +1397,18 @@ async def startup_event():
                 "badges": [],
                 "created_at": datetime.now(timezone.utc)
             })
-            logger.info("Manager user created")
+            logger.info(f"Manager user created: {manager_email}")
+            existing_manager = {"_id": result.inserted_id}
         except Exception as e:
             if "duplicate" in str(e).lower():
                 logger.info("Manager user already exists")
+                existing_manager = await db.users.find_one({"email": manager_email})
             else:
+                logger.error(f"Failed to create manager: {e}")
                 raise
     
-    manager = await db.users.find_one({"email": manager_email})
-    manager_id = str(manager["_id"]) if manager else None
+    manager_id = str(existing_manager["_id"]) if existing_manager else None
+    logger.info(f"Manager ID set to: {manager_id}")
     
     employees = [
         {"email": "employee1@goalforge.com", "name": "Rajesh Kumar", "department": "Engineering"},
@@ -1462,6 +1470,58 @@ async def startup_event():
 - GET /api/auth/me
 - POST /api/auth/logout
 """
+    
+    # Create sample goals for demo purposes
+    try:
+        # Get all employees
+        employee1 = await db.users.find_one({"email": "employee1@goalforge.com"})
+        employee2 = await db.users.find_one({"email": "employee2@goalforge.com"})
+        employee3 = await db.users.find_one({"email": "employee3@goalforge.com"})
+        
+        sample_goals = [
+            {
+                "user_id": str(employee1["_id"]),
+                "title": "Complete Q1 Project",
+                "description": "Deliver the Q1 engineering project on time",
+                "target": "100%",
+                "status": "approved",
+                "weightage": 30,
+                "deleted": False,
+                "created_at": datetime.now(timezone.utc)
+            },
+            {
+                "user_id": str(employee2["_id"]),
+                "title": "Increase Sales by 20%",
+                "description": "Achieve 20% sales growth this quarter",
+                "target": "20%",
+                "status": "pending",
+                "weightage": 25,
+                "deleted": False,
+                "created_at": datetime.now(timezone.utc)
+            },
+            {
+                "user_id": str(employee3["_id"]),
+                "title": "Improve Code Quality",
+                "description": "Reduce code defects by 15%",
+                "target": "85%",
+                "status": "approved",
+                "weightage": 20,
+                "deleted": False,
+                "created_at": datetime.now(timezone.utc)
+            }
+        ]
+        
+        for goal in sample_goals:
+            existing_goal = await db.goals.find_one({"user_id": goal["user_id"], "title": goal["title"]})
+            if not existing_goal:
+                try:
+                    await db.goals.insert_one(goal)
+                    logger.info(f"Sample goal created: {goal['title']}")
+                except Exception as e:
+                    if "duplicate" not in str(e).lower():
+                        logger.error(f"Failed to create sample goal: {e}")
+    except Exception as e:
+        logger.warning(f"Could not create sample goals: {e}")
     
     memory_dir = ROOT_DIR.parent / "memory"
     memory_dir.mkdir(parents=True, exist_ok=True)
