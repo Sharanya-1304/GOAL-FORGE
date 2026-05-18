@@ -26,6 +26,21 @@ except Exception:  # Optional dependency for AI endpoints
     LlmChat = None
     UserMessage = None
 
+# Validate required environment variables
+def validate_env_vars():
+    required_vars = ['MONGO_URL', 'DB_NAME', 'JWT_SECRET']
+    missing = [var for var in required_vars if var not in os.environ]
+    if missing:
+        logger.error(f"Missing required environment variables: {', '.join(missing)}")
+        raise RuntimeError(f"Missing required environment variables: {', '.join(missing)}")
+
+# Call validation before app setup
+try:
+    validate_env_vars()
+except RuntimeError as e:
+    logger.error(f"Environment validation failed: {e}")
+    raise
+
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
