@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>GoalForge Architecture</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">GoalForge Architecture</h1>
+</header>
+<h1
+id="atomquest-goal-tracking-portal---architecture-documentation">AtomQuest
+Goal Tracking Portal - Architecture &amp; Documentation</h1>
+<h2 id="overview">Overview</h2>
+<p>Complete enterprise-grade Goal Setting &amp; Tracking Portal built
+for AtomQuest Hackathon 2026.</p>
+<h2 id="technology-stack">Technology Stack</h2>
+<h3 id="backend">Backend</h3>
+<ul>
+<li><strong>Framework</strong>: FastAPI (Python)</li>
+<li><strong>Database</strong>: MongoDB with Motor (async driver)</li>
+<li><strong>Authentication</strong>: JWT + bcrypt password hashing</li>
+<li><strong>Email</strong>: Resend API for transactional emails</li>
+<li><strong>API Structure</strong>: RESTful API with /api prefix</li>
+</ul>
+<h3 id="frontend">Frontend</h3>
+<ul>
+<li><strong>Framework</strong>: React 19</li>
+<li><strong>Styling</strong>: Tailwind CSS + Shadcn/UI Components</li>
+<li><strong>Charts</strong>: Recharts for analytics visualizations</li>
+<li><strong>Routing</strong>: React Router DOM v7</li>
+<li><strong>State Management</strong>: Context API for
+authentication</li>
+<li><strong>HTTP Client</strong>: Axios with credentials support</li>
+</ul>
+<h3 id="design-system">Design System</h3>
+<ul>
+<li><strong>Theme</strong>: Swiss &amp; High-Contrast (Professional
+Corporate)</li>
+<li><strong>Fonts</strong>: Chivo (headings), IBM Plex Sans (body), IBM
+Plex Mono (code)</li>
+<li><strong>Color Palette</strong>:
+<ul>
+<li>Primary: #0038FF (Blue)</li>
+<li>Success: #16A34A (Green)</li>
+<li>Warning: #F59E0B (Orange)</li>
+<li>Error: #DC2626 (Red)</li>
+<li>Info: #0284C7 (Light Blue)</li>
+</ul></li>
+</ul>
+<h2 id="core-features-implemented">Core Features Implemented</h2>
+<h3 id="phase-1---goal-creation-approval">Phase 1 - Goal Creation &amp;
+Approval ✅</h3>
+<ol type="1">
+<li><strong>Employee Interface</strong>
+<ul>
+<li>Create goal sheets with thrust areas, titles, descriptions</li>
+<li>Set targets with 4 UoM types: Numeric, Percentage, Timeline,
+Zero-based</li>
+<li>Assign weightage (10-100%, total must equal 100%)</li>
+<li>Maximum 8 goals per employee</li>
+<li>Validation enforced on frontend and backend</li>
+</ul></li>
+<li><strong>Manager Approval Workflow</strong>
+<ul>
+<li>Review submitted goals from team members</li>
+<li>Approve goals (locks them)</li>
+<li>Return for rework with feedback</li>
+<li>Email notifications on approval/rejection</li>
+</ul></li>
+<li><strong>Goal Locking</strong>
+<ul>
+<li>Approved goals are automatically locked</li>
+<li>Only admins can unlock locked goals</li>
+</ul></li>
+</ol>
+<h3 id="phase-2---achievement-tracking-check-ins">Phase 2 - Achievement
+Tracking &amp; Check-ins ✅</h3>
+<ol type="1">
+<li><strong>Quarterly Check-ins</strong>
+<ul>
+<li>Log actual achievement against planned targets</li>
+<li>Select status: Not Started, On Track, Completed</li>
+<li>Quarterly windows: Q1 (July), Q2 (October), Q3 (January), Q4
+(March-April)</li>
+</ul></li>
+<li><strong>Progress Score Calculation</strong>
+<ul>
+<li><strong>Numeric/Percentage (Higher Better)</strong>: Achievement ÷
+Target × 100</li>
+<li><strong>Numeric/Percentage (Lower Better)</strong>: Target ÷
+Achievement × 100</li>
+<li><strong>Timeline</strong>: Date-based completion tracking</li>
+<li><strong>Zero-based</strong>: 0 = 100%, else 0%</li>
+</ul></li>
+<li><strong>Manager Comments</strong>
+<ul>
+<li>Add structured feedback during check-ins</li>
+<li>View complete check-in history</li>
+</ul></li>
+</ol>
+<h3 id="analytics-module">Analytics Module ✅</h3>
+<ol type="1">
+<li><strong>Dashboard Metrics</strong>
+<ul>
+<li>Total users, goals, approval rates</li>
+<li>Real-time completion tracking</li>
+<li>Department-wise goal distribution</li>
+</ul></li>
+<li><strong>Visualizations</strong>
+<ul>
+<li>Bar charts for goals by department</li>
+<li>Pie charts for completion rate distribution</li>
+<li>Interactive tooltips with Recharts</li>
+</ul></li>
+<li><strong>Reporting</strong>
+<ul>
+<li>Employee completion rates table</li>
+<li>Achievement tracking</li>
+<li>Exportable data (via browser)</li>
+</ul></li>
+<li><strong>Audit Trail</strong>
+<ul>
+<li>System logs all goal changes</li>
+<li>Tracks who changed what and when</li>
+<li>Admin-only access</li>
+</ul></li>
+</ol>
+<h3 id="user-roles">User Roles ✅</h3>
+<ol type="1">
+<li><strong>Employee</strong>
+<ul>
+<li>Create and manage personal goals</li>
+<li>Log quarterly check-ins</li>
+<li>View own progress</li>
+</ul></li>
+<li><strong>Manager</strong>
+<ul>
+<li>All employee features</li>
+<li>Approve/reject team goals</li>
+<li>View team progress</li>
+<li>Add check-in comments</li>
+</ul></li>
+<li><strong>Admin/HR</strong>
+<ul>
+<li>All manager features</li>
+<li>Organization-wide analytics</li>
+<li>Audit trail access</li>
+<li>User management</li>
+<li>Exception handling (unlock goals)</li>
+</ul></li>
+</ol>
+<h2 id="api-endpoints">API Endpoints</h2>
+<h3 id="authentication">Authentication</h3>
+<ul>
+<li><code>POST /api/auth/register</code> - Create new account</li>
+<li><code>POST /api/auth/login</code> - Login with email/password</li>
+<li><code>POST /api/auth/logout</code> - Logout user</li>
+<li><code>GET /api/auth/me</code> - Get current user</li>
+<li><code>POST /api/auth/refresh</code> - Refresh access token</li>
+<li><code>POST /api/auth/forgot-password</code> - Request password
+reset</li>
+<li><code>POST /api/auth/reset-password</code> - Reset password with
+token</li>
+</ul>
+<h3 id="goals">Goals</h3>
+<ul>
+<li><code>POST /api/goals</code> - Create new goal</li>
+<li><code>GET /api/goals</code> - Get user’s goals</li>
+<li><code>GET /api/goals/team</code> - Get team goals
+(manager/admin)</li>
+<li><code>PATCH /api/goals/{goal_id}</code> - Update goal</li>
+<li><code>POST /api/goals/{goal_id}/approve</code> - Approve goal
+(manager/admin)</li>
+<li><code>POST /api/goals/{goal_id}/reject</code> - Return for rework
+(manager/admin)</li>
+</ul>
+<h3 id="check-ins">Check-ins</h3>
+<ul>
+<li><code>POST /api/checkins/{goal_id}</code> - Create check-in</li>
+<li><code>GET /api/checkins/goal/{goal_id}</code> - Get goal
+check-ins</li>
+</ul>
+<h3 id="analytics">Analytics</h3>
+<ul>
+<li><code>GET /api/analytics/dashboard</code> - Dashboard
+statistics</li>
+<li><code>GET /api/analytics/completion-rates</code> - Employee
+completion data</li>
+<li><code>GET /api/analytics/audit-trail</code> - Audit logs
+(admin)</li>
+</ul>
+<h2 id="database-schema">Database Schema</h2>
+<h3 id="collections">Collections</h3>
+<ol type="1">
+<li><p><strong>users</strong></p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">email</span><span class="op">:</span> <span class="bu">String</span> (unique<span class="op">,</span> indexed)<span class="op">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">password_hash</span><span class="op">:</span> <span class="bu">String</span> (bcrypt)<span class="op">,</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">name</span><span class="op">:</span> <span class="bu">String</span><span class="op">,</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">role</span><span class="op">:</span> <span class="st">&quot;employee&quot;</span> <span class="op">|</span> <span class="st">&quot;manager&quot;</span> <span class="op">|</span> <span class="st">&quot;admin&quot;</span><span class="op">,</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">department</span><span class="op">:</span> <span class="bu">String</span><span class="op">,</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">manager_id</span><span class="op">:</span> <span class="bu">String</span> (ObjectId reference)<span class="op">,</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">created_at</span><span class="op">:</span> DateTime</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div></li>
+<li><p><strong>goals</strong></p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">user_id</span><span class="op">:</span> <span class="bu">String</span> (ObjectId reference<span class="op">,</span> indexed)<span class="op">,</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">thrust_area</span><span class="op">:</span> <span class="bu">String</span><span class="op">,</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">title</span><span class="op">:</span> <span class="bu">String</span><span class="op">,</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">description</span><span class="op">:</span> <span class="bu">String</span><span class="op">,</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">uom</span><span class="op">:</span> <span class="st">&quot;numeric&quot;</span> <span class="op">|</span> <span class="st">&quot;percentage&quot;</span> <span class="op">|</span> <span class="st">&quot;timeline&quot;</span> <span class="op">|</span> <span class="st">&quot;zero&quot;</span><span class="op">,</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">target</span><span class="op">:</span> <span class="bu">String</span><span class="op">,</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">weightage</span><span class="op">:</span> <span class="bu">Number</span><span class="op">,</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">metric_type</span><span class="op">:</span> <span class="st">&quot;higher_better&quot;</span> <span class="op">|</span> <span class="st">&quot;lower_better&quot;</span><span class="op">,</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">status</span><span class="op">:</span> <span class="st">&quot;pending&quot;</span> <span class="op">|</span> <span class="st">&quot;approved&quot;</span> <span class="op">|</span> <span class="st">&quot;rejected&quot;</span> <span class="op">|</span> <span class="st">&quot;rework&quot;</span><span class="op">,</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">locked</span><span class="op">:</span> <span class="bu">Boolean</span><span class="op">,</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">shared_from</span><span class="op">:</span> <span class="bu">String</span><span class="op">,</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="dt">rejection_reason</span><span class="op">:</span> <span class="bu">String</span><span class="op">,</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="dt">created_at</span><span class="op">:</span> DateTime<span class="op">,</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="dt">deleted</span><span class="op">:</span> <span class="bu">Boolean</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div></li>
+<li><p><strong>checkins</strong></p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">goal_id</span><span class="op">:</span> <span class="bu">String</span> (ObjectId reference<span class="op">,</span> indexed)<span class="op">,</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">user_id</span><span class="op">:</span> <span class="bu">String</span><span class="op">,</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">quarter</span><span class="op">:</span> <span class="st">&quot;Q1&quot;</span> <span class="op">|</span> <span class="st">&quot;Q2&quot;</span> <span class="op">|</span> <span class="st">&quot;Q3&quot;</span> <span class="op">|</span> <span class="st">&quot;Q4&quot;</span><span class="op">,</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">actual_achievement</span><span class="op">:</span> <span class="bu">String</span><span class="op">,</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">status</span><span class="op">:</span> <span class="st">&quot;not_started&quot;</span> <span class="op">|</span> <span class="st">&quot;on_track&quot;</span> <span class="op">|</span> <span class="st">&quot;completed&quot;</span><span class="op">,</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">progress_score</span><span class="op">:</span> <span class="bu">Number</span><span class="op">,</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">manager_comment</span><span class="op">:</span> <span class="bu">String</span><span class="op">,</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">created_at</span><span class="op">:</span> DateTime</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div></li>
+<li><p><strong>audit_logs</strong></p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">entity_type</span><span class="op">:</span> <span class="bu">String</span><span class="op">,</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">entity_id</span><span class="op">:</span> <span class="bu">String</span><span class="op">,</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">action</span><span class="op">:</span> <span class="bu">String</span><span class="op">,</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">user_id</span><span class="op">:</span> <span class="bu">String</span><span class="op">,</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">user_name</span><span class="op">:</span> <span class="bu">String</span><span class="op">,</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">changes</span><span class="op">:</span> <span class="bu">Object</span><span class="op">,</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">timestamp</span><span class="op">:</span> DateTime</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div></li>
+<li><p><strong>login_attempts</strong></p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">identifier</span><span class="op">:</span> <span class="bu">String</span> (indexed)<span class="op">,</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">attempts</span><span class="op">:</span> <span class="bu">Number</span><span class="op">,</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">locked_until</span><span class="op">:</span> DateTime<span class="op">,</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">last_attempt</span><span class="op">:</span> DateTime</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div></li>
+<li><p><strong>password_reset_tokens</strong></p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">user_id</span><span class="op">:</span> <span class="bu">String</span><span class="op">,</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">token</span><span class="op">:</span> <span class="bu">String</span><span class="op">,</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">expires_at</span><span class="op">:</span> <span class="fu">DateTime</span> (TTL index)<span class="op">,</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">used</span><span class="op">:</span> <span class="bu">Boolean</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div></li>
+</ol>
+<h2 id="security-features">Security Features</h2>
+<ol type="1">
+<li><strong>Authentication</strong>
+<ul>
+<li>JWT tokens (15-min access, 7-day refresh)</li>
+<li>httpOnly cookies for security</li>
+<li>Bcrypt password hashing (cost factor 12)</li>
+</ul></li>
+<li><strong>Brute Force Protection</strong>
+<ul>
+<li>5 failed attempts = 15-minute lockout</li>
+<li>IP + email tracking</li>
+<li>Automatic cleanup on successful login</li>
+</ul></li>
+<li><strong>Authorization</strong>
+<ul>
+<li>Role-based access control</li>
+<li>Protected routes on frontend</li>
+<li>Middleware validation on backend</li>
+</ul></li>
+<li><strong>Data Validation</strong>
+<ul>
+<li>Pydantic models for request validation</li>
+<li>Custom validators for business rules</li>
+<li>MongoDB ObjectId handling</li>
+</ul></li>
+</ol>
+<h2 id="email-notifications">Email Notifications</h2>
+<ol type="1">
+<li><strong>Goal Submission</strong>
+<ul>
+<li>Sent to manager when employee submits goal</li>
+<li>Includes goal title and action required</li>
+</ul></li>
+<li><strong>Approval</strong>
+<ul>
+<li>Sent to employee when goal is approved</li>
+<li>Confirms goal is locked</li>
+</ul></li>
+<li><strong>Rejection</strong>
+<ul>
+<li>Sent to employee with feedback</li>
+<li>Includes reason for rework</li>
+</ul></li>
+</ol>
+<h2 id="test-credentials">Test Credentials</h2>
+<h3 id="admin-account">Admin Account</h3>
+<ul>
+<li>Email: admin@atomberg.com</li>
+<li>Password: Admin@123</li>
+<li>Role: admin</li>
+</ul>
+<h3 id="manager-account">Manager Account</h3>
+<ul>
+<li>Email: manager@atomberg.com</li>
+<li>Password: Manager@123</li>
+<li>Role: manager</li>
+<li>Department: Engineering</li>
+</ul>
+<h3 id="employee-accounts">Employee Accounts</h3>
+<ol type="1">
+<li><p>Email: employee1@atomberg.com Password: Employee@123 Role:
+employee Department: Engineering Manager: Sarah Johnson</p></li>
+<li><p>Email: employee2@atomberg.com Password: Employee@123 Role:
+employee Department: Engineering Manager: Sarah Johnson</p></li>
+</ol>
+<h2 id="deployment">Deployment</h2>
+<h3 id="backend-1">Backend</h3>
+<ul>
+<li>Runs on port 8001 (internal)</li>
+<li>Hot reload enabled for development</li>
+<li>Supervisor manages process</li>
+</ul>
+<h3 id="frontend-1">Frontend</h3>
+<ul>
+<li>Runs on port 3000 (internal)</li>
+<li>Webpack dev server with hot reload</li>
+<li>Production build: <code>yarn build</code></li>
+</ul>
+<h3 id="environment-variables">Environment Variables</h3>
+<p><strong>Backend (.env)</strong></p>
+<pre><code>MONGO_URL=mongodb://localhost:27017
+DB_NAME=atomquest_db
+CORS_ORIGINS=*
+JWT_SECRET=&lt;64-char-hex&gt;
+ADMIN_EMAIL=admin@atomberg.com
+ADMIN_PASSWORD=Admin@123
+RESEND_API_KEY=&lt;your-key&gt;
+SENDER_EMAIL=onboarding@resend.dev</code></pre>
+<p><strong>Frontend (.env)</strong></p>
+<pre><code>REACT_APP_BACKEND_URL=&lt;backend-url&gt;
+WDS_SOCKET_PORT=443
+ENABLE_HEALTH_CHECK=false</code></pre>
+<h2 id="file-structure">File Structure</h2>
+<pre><code>/app/
+├── backend/
+│   ├── server.py           # Main FastAPI application
+│   ├── .env                # Environment variables
+│   └── requirements.txt    # Python dependencies
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── Layout.js
+│   │   │   ├── ProtectedRoute.js
+│   │   │   └── ui/         # Shadcn components
+│   │   ├── contexts/
+│   │   │   └── AuthContext.js
+│   │   ├── pages/
+│   │   │   ├── LoginPage.js
+│   │   │   ├── DashboardPage.js
+│   │   │   ├── GoalsPage.js
+│   │   │   ├── TeamGoalsPage.js
+│   │   │   ├── CheckinsPage.js
+│   │   │   └── AnalyticsPage.js
+│   │   ├── App.js
+│   │   ├── App.css
+│   │   └── index.css
+│   ├── .env
+│   └── package.json
+├── design_guidelines.json  # UI/UX specifications
+└── memory/
+    └── test_credentials.md # Test accounts</code></pre>
+<h2 id="key-differentiators">Key Differentiators</h2>
+<ol type="1">
+<li><strong>Professional Design</strong>: Swiss-inspired, high-contrast
+UI that looks like enterprise software</li>
+<li><strong>Complete Functionality</strong>: All Phase 1 &amp; Phase 2
+requirements implemented</li>
+<li><strong>Advanced Analytics</strong>: Charts, heatmaps, and real-time
+dashboards</li>
+<li><strong>Robust Security</strong>: JWT auth, brute force protection,
+audit trails</li>
+<li><strong>Email Integration</strong>: Automated notifications for all
+workflow events</li>
+<li><strong>Mobile Responsive</strong>: Works on all devices</li>
+<li><strong>Scalable Architecture</strong>: Async MongoDB, clean
+separation of concerns</li>
+<li><strong>Data-Driven</strong>: Progress calculations, completion
+rates, QoQ trends</li>
+</ol>
+<h2 id="performance-optimizations">Performance Optimizations</h2>
+<ol type="1">
+<li><strong>Database</strong>
+<ul>
+<li>Indexes on frequently queried fields</li>
+<li>Projection to exclude unnecessary data</li>
+<li>Async operations throughout</li>
+</ul></li>
+<li><strong>Frontend</strong>
+<ul>
+<li>Code splitting by route</li>
+<li>Lazy loading of components</li>
+<li>Optimized images and assets</li>
+</ul></li>
+<li><strong>API</strong>
+<ul>
+<li>Non-blocking email sending</li>
+<li>Efficient aggregations</li>
+<li>Minimal payload sizes</li>
+</ul></li>
+</ol>
+<h2 id="future-enhancements-not-implemented">Future Enhancements (Not
+Implemented)</h2>
+<ol type="1">
+<li><strong>Microsoft Entra ID Integration</strong>
+<ul>
+<li>SSO authentication</li>
+<li>Automatic org hierarchy sync</li>
+</ul></li>
+<li><strong>Teams Integration</strong>
+<ul>
+<li>Bot notifications</li>
+<li>Deep linking</li>
+<li>Adaptive cards</li>
+</ul></li>
+<li><strong>Escalation Module</strong>
+<ul>
+<li>Configurable rules</li>
+<li>Auto-escalation chains</li>
+</ul></li>
+<li><strong>Shared Goals</strong>
+<ul>
+<li>Departmental KPIs</li>
+<li>Cross-functional goals</li>
+</ul></li>
+</ol>
+<h2 id="how-to-run">How to Run</h2>
+<ol type="1">
+<li><p><strong>Start Backend</strong></p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /app/backend</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> venv/bin/activate</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uvicorn</span> server:app <span class="at">--host</span> 0.0.0.0 <span class="at">--port</span> 8001 <span class="at">--reload</span></span></code></pre></div></li>
+<li><p><strong>Start Frontend</strong></p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /app/frontend</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="ex">yarn</span> start</span></code></pre></div></li>
+<li><p><strong>Access Application</strong></p>
+<ul>
+<li>Frontend: http://localhost:3000</li>
+<li>Backend API: http://localhost:8001/api</li>
+<li>API Docs: http://localhost:8001/docs</li>
+</ul></li>
+</ol>
+<h2 id="testing">Testing</h2>
+<h3 id="manual-testing">Manual Testing</h3>
+<ol type="1">
+<li>Login with test credentials</li>
+<li>Create goals as employee</li>
+<li>Approve as manager</li>
+<li>Log check-ins</li>
+<li>View analytics</li>
+</ol>
+<h3 id="api-testing">API Testing</h3>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Login</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-c</span> cookies.txt <span class="at">-X</span> POST http://localhost:8001/api/auth/login <span class="dt">\</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-H</span> <span class="st">&#39;Content-Type: application/json&#39;</span> <span class="dt">\</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">-d</span> <span class="st">&#39;{&quot;email&quot;:&quot;admin@atomberg.com&quot;,&quot;password&quot;:&quot;Admin@123&quot;}&#39;</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Get current user</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-b</span> cookies.txt http://localhost:8001/api/auth/me</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Create goal</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-b</span> cookies.txt <span class="at">-X</span> POST http://localhost:8001/api/goals <span class="dt">\</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">-H</span> <span class="st">&#39;Content-Type: application/json&#39;</span> <span class="dt">\</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">-d</span> <span class="st">&#39;{&quot;thrust_area&quot;:&quot;Sales&quot;,&quot;title&quot;:&quot;Increase Revenue&quot;,&quot;description&quot;:&quot;Grow revenue by 20%&quot;,&quot;uom&quot;:&quot;percentage&quot;,&quot;target&quot;:&quot;20&quot;,&quot;weightage&quot;:50,&quot;metric_type&quot;:&quot;higher_better&quot;}&#39;</span></span></code></pre></div>
+<h2 id="hackathon-submission-checklist">Hackathon Submission
+Checklist</h2>
+<ul>
+<li>✅ Functional portal with all Phase 1 &amp; 2 requirements</li>
+<li>✅ Working demo accessible via URL</li>
+<li>✅ Source code in Git repository</li>
+<li>✅ Architecture diagram (this document)</li>
+<li>✅ Test credentials for all 3 roles</li>
+<li>✅ Clean, intuitive UI/UX</li>
+<li>✅ Mobile responsive design</li>
+<li>✅ Bonus features (Analytics Module)</li>
+<li>✅ Audit trail and reporting</li>
+<li>✅ Email notifications</li>
+<li>✅ Cost-optimized architecture</li>
+</ul>
+<h2 id="contact">Contact</h2>
+<p>For demo or questions, use the test credentials provided above.</p>
+</body>
+</html>

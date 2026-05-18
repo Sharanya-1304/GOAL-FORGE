@@ -1,0 +1,97 @@
+{
+  "project_name": "AtomQuest Hackathon 2026 - Goal Tracking Portal",
+  "theme": "light",
+  "archetype": "Archetype 4: Swiss & High-Contrast",
+  "design_philosophy": "Objective, function-first, and highly structured. The UI acts as a 'Control Room' for enterprise goal tracking. 95% of the UI is monochrome, utilizing spacing and typographic hierarchy over decorative elements. Color is reserved strictly for functionality (status, actions, heatmaps).",
+  "colors": {
+    "primary": "#0038FF",
+    "primary_hover": "#002ED6",
+    "background": "#FFFFFF",
+    "surface": "#F9FAFB",
+    "surface_alt": "#F3F4F6",
+    "border": "#E5E7EB",
+    "border_focus": "#0038FF",
+    "text_primary": "#0A0A0A",
+    "text_secondary": "#52525B",
+    "text_tertiary": "#A1A1AA",
+    "status_success": "#16A34A",
+    "status_warning": "#F59E0B",
+    "status_error": "#DC2626",
+    "status_info": "#0284C7",
+    "heatmap_scale": [
+      "#F4F4F5",
+      "#DBEAFE",
+      "#93C5FD",
+      "#3B82F6",
+      "#1D4ED8"
+    ]
+  },
+  "typography": {
+    "heading_font": "Chivo",
+    "body_font": "IBM Plex Sans",
+    "mono_font": "IBM Plex Mono",
+    "scales": {
+      "h1": "text-3xl sm:text-4xl font-bold tracking-tight text-[#0A0A0A]",
+      "h2": "text-2xl sm:text-3xl font-semibold tracking-tight text-[#0A0A0A]",
+      "h3": "text-xl sm:text-2xl font-medium tracking-tight text-[#0A0A0A]",
+      "h4": "text-lg font-medium text-[#0A0A0A]",
+      "body": "text-sm text-[#52525B] leading-relaxed",
+      "label": "text-xs font-semibold tracking-widest text-[#52525B] uppercase",
+      "metric": "text-4xl font-black tracking-tighter text-[#0A0A0A]"
+    }
+  },
+  "spacing_and_layout": {
+    "grid_system": "Control Room Grid. Base grid-cols-1 md:grid-cols-3 lg:grid-cols-4. Tight gaps (gap-4 or gap-6).",
+    "padding": "Generous container padding (p-6 or p-8). Internal component padding compact (p-4) to maintain data density.",
+    "borders_and_radius": "Max border-radius is 6px (rounded-md). Emphasize sharp, clean edges.",
+    "surfaces": "Flat surfaces with 1px border (border-[#E5E7EB]). Absolutely NO soft drop shadows. Use optical alignment for icons/text."
+  },
+  "components": {
+    "buttons": "Flat solid background. Primary: bg-[#0038FF] text-white hover:bg-[#002ED6]. Secondary: bg-white border border-[#E5E7EB] hover:bg-[#F3F4F6].",
+    "forms": "Use Shadcn components heavily customized to be flat. 1px solid borders, square/slightly rounded corners. Focus state must use ring-1 ring-[#0038FF].",
+    "tables": "Dense layout. py-2 px-3 cells. Sticky headers with uppercase tiny labels. Zebra striping or subtle hover (hover:bg-[#F9FAFB]) for readability.",
+    "cards": "Cardless style preferred. If using cards, apply border border-[#E5E7EB] bg-white and no shadow.",
+    "charts": "Recharts. Use functional colors or brand primary. Clean tooltips with bold metrics.",
+    "heatmap": "CSS Grid based square cells representing QoQ check-in completion. Color mapped to heatmap_scale.",
+    "navigation": "Fixed left sidebar. Clean, monochrome, icon + text. Active state highlighted with bg-[#F3F4F6] and strong text-primary."
+  },
+  "interactive_and_motion": {
+    "hover_states": "Explicit color shifts (backgrounds or borders). No floating/translating on hover to maintain structural solidity.",
+    "transitions": "Fast and snappy: transition-all duration-150 ease-in-out.",
+    "accessibility": "Focus rings must be high contrast. Support prefers-reduced-motion."
+  },
+  "icons_and_assets": {
+    "library": "lucide-react (default). Stroke width 1.5. Sizes 16px to 20px.",
+    "logo_concept": "Text 'AtomQuest' in Chivo Black + standard lucide target/hexagon icon."
+  },
+  "media": {
+    "login_background": {
+      "url": "https://images.unsplash.com/photo-1498262257252-c282316270bc?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzV8MHwxfHNlYXJjaHwzfHxwcm9mZXNzaW9uYWwlMjBhYnN0cmFjdCUyMGNvcnBvcmF0ZSUyMGFyY2hpdGVjdHVyZXxlbnwwfHx8fDE3NzkwMjY2MjR8MA&ixlib=rb-4.1.0&q=85",
+      "description": "Abstract corporate architecture to be used on the login page as a background with a dark overlay."
+    },
+    "avatars": [
+      {
+        "url": "https://images.unsplash.com/photo-1573496130141-209d200cebd8?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxNzV8MHwxfHNlYXJjaHwyfHxkaXZlcnNlJTIwYnVzaW5lc3MlMjBwcm9mZXNzaW9uYWwlMjBwb3J0cmFpdHxlbnwwfHx8fDE3NzkwMjY2MjR8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Avatar placeholder for Manager role."
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1758518731468-98e90ffd7430?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxNzV8MHwxfHNlYXJjaHwxfHxkaXZlcnNlJTIwYnVzaW5lc3MlMjBwcm9mZXNzaW9uYWwlMjBwb3J0cmFpdHxlbnwwfHx8fDE3NzkwMjY2MjR8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Avatar placeholder for Employee role."
+      }
+    ]
+  },
+  "pages": {
+    "login": "2-column split. Left: Auth form with Role Switcher (Employee/Manager/Admin). Right: Full height login_background with overlay.",
+    "dashboard_layout": "Persistent left sidebar with navigation. Top header with context (User profile, quick actions). Main content area.",
+    "goal_creation": "Step-by-step or structured long form. Fields: Thrust Area, Goal Title, Target, Weightage, UoM (numeric/percentage/timeline/zero-based).",
+    "manager_approval": "Table view of pending goals. Clicking a row opens a slide-over/drawer or inline editor to approve/reject with comments.",
+    "check_in": "Interface showing goal progress. Form inputs for Q1-Q4 values. Visual progress bar calculating QoQ trend vs target.",
+    "analytics": "Dashboard containing Recharts (bar/line) for organization-wide progress, a Team Progress Heatmap, and an Achievement Reports Table.",
+    "audit_trail": "A timeline or table view tracking all state changes (Created, Approved, Checked-in) with timestamps and users."
+  },
+  "accessibility_and_testing": {
+    "testing_attributes": "All interactive elements MUST include data-testid (e.g., data-testid='login-submit-btn', data-testid='approve-goal-btn').",
+    "contrast": "Text contrast must meet at least 4.5:1. Use white text on primary button."
+  },
+  "instructions_to_main_agent": "Implement this dashboard using purely .js files (no .tsx). Utilize HTML+Tailwind for layouts and customize Shadcn components to follow the flat, high-contrast, border-heavy aesthetic. Do not use generic fonts for headings—import Chivo and IBM Plex Sans. Ensure every actionable element has a data-testid attribute. Do not invent unapproved colors. Build the Heatmap using standard grid layouts."
+}

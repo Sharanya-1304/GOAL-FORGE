@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: goal-forge-backend
+    runtime: docker
+    dockerfilePath: backend/Dockerfile
+    dockerContext: .
+    envVars:
+      - key: PORT
+        value: 5000
+    region: oregon
+    plan: free
+
+  - type: web
+    name: goal-forge-frontend
+    runtime: docker
+    dockerfilePath: frontend/Dockerfile
+    dockerContext: .
+    envVars:
+      - key: NODE_ENV
+        value: production
+    region: oregon
+    plan: free

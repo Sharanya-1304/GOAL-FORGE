@@ -1,0 +1,9 @@
+build:
+  languages:
+    - python
+    - nodejs
+  config:
+    PYTHON_RUNTIME_VERSION: 3.11.9
+    NODE_VERSION: 20.11.0
+run:
+  web: cd backend && gunicorn -w 4 -k uvicorn.workers.UvicornWorker server:app
