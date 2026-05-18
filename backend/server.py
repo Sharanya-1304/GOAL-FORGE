@@ -20,11 +20,18 @@ import jwt
 import asyncio
 import resend
 from bson import ObjectId
+
+# Configure logger
+logger = logging.getLogger(__name__)
 try:
     from emergentintegrations.llm.chat import LlmChat, UserMessage
 except Exception:  # Optional dependency for AI endpoints
     LlmChat = None
     UserMessage = None
+
+# Setup logging first (before any code that uses logger)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 # Validate required environment variables
 def validate_env_vars():
@@ -54,10 +61,6 @@ SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'onboarding@resend.dev')
 JWT_ALGORITHM = "HS256"
 JWT_SECRET = os.environ['JWT_SECRET']
 EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY', '')
-
-# Logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
 
 # Password hashing
 def hash_password(password: str) -> str:
